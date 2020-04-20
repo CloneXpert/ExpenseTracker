@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExpenseTracker.Data;
 using ExpenseTracker.Model;
+using Microsoft.Extensions.Logging;
 
 namespace ExpenseTracker.Controllers
 {
@@ -15,10 +15,12 @@ namespace ExpenseTracker.Controllers
     public class ExpenseItemsController : ControllerBase
     {
         private readonly ExpenseTrackerContext _context;
+        readonly ILogger _logger;
 
-        public ExpenseItemsController(ExpenseTrackerContext context)
+        public ExpenseItemsController(ExpenseTrackerContext context, ILogger<ExpenseItemsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/ExpenseItems
@@ -36,6 +38,7 @@ namespace ExpenseTracker.Controllers
 
             if (expenseItem == null)
             {
+                _logger.LogWarning($"There is no item found with the requested id={id}.");
                 return NotFound();
             }
 
@@ -50,6 +53,7 @@ namespace ExpenseTracker.Controllers
         {
             if (id != expenseItem.Id)
             {
+                _logger.LogWarning($"The id of the item to update ({expenseItem.Id}) does not match the id in the request ({id}).");
                 return BadRequest();
             }
 
@@ -63,10 +67,12 @@ namespace ExpenseTracker.Controllers
             {
                 if (!ExpenseItemExists(id))
                 {
+                    _logger.LogWarning($"Item with the id={id} does not exist.");
                     return NotFound();
                 }
                 else
                 {
+                    _logger.LogError($"An error has occured.");
                     throw;
                 }
             }
@@ -93,6 +99,7 @@ namespace ExpenseTracker.Controllers
             var expenseItem = await _context.ExpenseItem.FindAsync(id);
             if (expenseItem == null)
             {
+                _logger.LogWarning($"There is no item to be deleted with the requested id={id}.");
                 return NotFound();
             }
 

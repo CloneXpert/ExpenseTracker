@@ -39,7 +39,7 @@ export default class ExpenseList extends Component {
       expenseItems: []
     }
   }
-    componentDidMount() {
+  componentDidMount() {
     this.fetchItems();
   }
 
@@ -54,6 +54,7 @@ export default class ExpenseList extends Component {
     if (selectedRows) {
       let success = true;
       for (let i = 0; i < selectedRows.length; i++) {
+        //TODO: delete them in a batch instead
         ExpenseDataService.delete(selectedRows[i].id)
           .then(response => {
             console.log(response.data);
@@ -90,7 +91,6 @@ export default class ExpenseList extends Component {
         this.setState({
           expenseItems: response.data
         });
-        console.log(response.data);
       })
       .catch(e => {
         console.log(e);
@@ -110,10 +110,13 @@ export default class ExpenseList extends Component {
       >
         <Link to={`/Expenses/Add`} className="btn btn-outline-success btn-sm">Add new expense</Link>
         {firstSelectedItem &&
-          <Link to={`/Expenses/Edit/${firstSelectedItem.id}`} className="btn btn-outline-primary btn-sm">Edit</Link>}
-        <button className="btn btn-outline-danger btn-sm" role="button" onClick={() => this.onDelete()}>
-          Delete Selected
-        </button>
+          <>
+            <Link to={`/Expenses/Edit/${firstSelectedItem.id}`} className="btn btn-outline-primary btn-sm">Edit</Link>
+            <button className="btn btn-outline-danger btn-sm" role="button" onClick={() => this.onDelete()}>
+              Delete Selected
+            </button>
+          </>
+        }
         <AgGridReact
           columnDefs={columnDefs}
           rowData={expenseItems}
