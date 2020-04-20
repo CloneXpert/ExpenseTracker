@@ -4,6 +4,7 @@ import ExpenseDataService from "../../services/expense.service";
 import * as Yup from 'yup';
 import DatePicker from "../DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ExpenseItemType from '../../enum/expenseItemType';
 
 export default class AddExpense extends Component {
 
@@ -13,10 +14,10 @@ export default class AddExpense extends Component {
         initialValues={
           {
             transactionDate: new Date(),
-            amount: 10,
+            amount: 0,
             recipient: "",
             currency: "CHF",
-            expenseItemType: 0
+            //type: 0
           }
         }
         onSubmit={async values => {
@@ -25,9 +26,6 @@ export default class AddExpense extends Component {
 
           ExpenseDataService.create(data)
             .then(response => {
-
-              alert(response.data);
-
               //this.setState({
               //  id: response.data.id,
               //  title: response.data.title,
@@ -37,12 +35,11 @@ export default class AddExpense extends Component {
               //  submitted: true
               //});
               console.log(response.data);
+              this.props.history.push('/expenses')
             })
             .catch(e => {
               console.log(e);
             });
-
-
         }}
         validationSchema={
           Yup.object().shape({
@@ -52,6 +49,7 @@ export default class AddExpense extends Component {
             transactionDate: Yup.date().default(function () {
               return new Date();
             }),
+            recipient: Yup.string().required(),
           })
         }
       >
@@ -67,9 +65,10 @@ export default class AddExpense extends Component {
             handleSubmit,
             handleReset
           } = props;
+
           return (
-            <form onSubmit={handleSubmit} className="col-sm-6">
-              <div class="form-group">
+            <form onSubmit={handleSubmit} className="col-sm-4">
+              <div className="form-group">
                 <label htmlFor="transactionDate" style={{ display: "block" }}>
                   Transaction Date
               </label>
@@ -84,13 +83,18 @@ export default class AddExpense extends Component {
                 <input
                   id="amount"
                   type="number"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   className={
                     errors.amount && touched.amount
-                      ? "form-control error"
-                      : "form-control"
+                      ? "form-control text-input error"
+                      : "form-control text-input"
                   }
                 />
               </div>
+              {errors.amount && touched.amount && (
+                <div className="input-feedback">{errors.amount}</div>
+              )}
 
               <div className="form-group">
                 <label htmlFor="recipient" style={{ display: "block" }}>
@@ -99,19 +103,22 @@ export default class AddExpense extends Component {
                 <input
                   id="recipient"
                   type="text"
-                  value={values.recipient}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                   className={
                     errors.recipient && touched.recipient
                       ? "form-control text-input error"
                       : "form-control text-input"
                   }
+                  value={values.recipient}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 />
               </div>
+              {errors.recipient && touched.recipient && (
+                <div className="input-feedback">{errors.recipient}</div>
+              )}
 
               <div className="form-group">
-                <label htmlFor="recipient" style={{ display: "block" }}>
+                <label htmlFor="currency" style={{ display: "block" }}>
                   Currency
                 </label>
                 <Field as="select" name="currency" className="form-control">
@@ -122,20 +129,15 @@ export default class AddExpense extends Component {
               </div>
 
               <div className="form-group">
-                <label htmlFor="recipient" style={{ display: "block" }}>
+                <label htmlFor="type" style={{ display: "block" }}>
                   Type
                 </label>
-                <Field as="select" name="expenseItemType" className="form-control">
-                  <option value="0">Food</option>
-                  <option value="1">Drink</option>
-                  <option value="2">Electronics</option>
-                  <option value="3">Other</option>
+                <Field as="select" name="type" className="form-control">
+                  {Object.keys(ExpenseItemType).map(key =>
+                    <option key={key} value={key}>{ExpenseItemType[key]}</option>
+                  )}
                 </Field>
               </div>
-
-              {errors.amount && touched.amount && (
-                <div className="input-feedback">{errors.amount}</div>
-              )}
 
               <button
                 type="button"
@@ -148,8 +150,8 @@ export default class AddExpense extends Component {
               <button type="submit"
                 className="btn btn-success"
                 disabled={isSubmitting}>
-                Submit
-            </button>
+                {isSubmitting ? 'Submitting expense...' : 'Add expense'}
+              </button>
 
             </form>
           );

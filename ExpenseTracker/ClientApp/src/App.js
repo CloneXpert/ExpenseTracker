@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
 import AddExpense from './components/expense/AddExpense'
-
+import ExpenseList from './components/expense/ExpenseList'
 import './custom.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -15,11 +12,10 @@ export default class App extends Component {
   render() {
     return (
       <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/expenses/add' component={AddExpense} />
-        {/*<Route path='/expenses' component={ExpenseItems} />
-        <Route path='/expenses/:id' component={ExpenseItem} />*/}
+        <Route exact path='/' component={ExpenseList} />
+        <Route exact path='/expenses' component={ExpenseList} />
+        <Route exact path='/expenses/add' component={AddExpense} />
+        <Route exact path='/expenses/edit/:id' component={AddExpense} />
       </Layout>
     );
   }

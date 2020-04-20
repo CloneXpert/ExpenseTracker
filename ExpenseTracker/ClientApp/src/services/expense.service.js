@@ -2,11 +2,11 @@
 
 class ExpenseDataService {
   getAll() {
-    return http.get("/expenses");
+    return http.get("/ExpenseItems");
   }
 
   get(id) {
-    return http.get(`/expenses/${id}`);
+    return http.get(`/ExpenseItems/${id}`);
   }
 
   create(data) {
@@ -18,19 +18,11 @@ class ExpenseDataService {
   }
 
   update(id, data) {
-    return http.put(`/expenses/${id}`, data);
+    return http.put(`/ExpenseItems/${id}`, data);
   }
 
   delete(id) {
-    return http.delete(`/expenses/${id}`);
-  }
-
-  deleteAll() {
-    return http.delete(`/expenses`);
-  }
-
-  findByTitle(title) {
-    return http.get(`/expenses?title=${title}`);
+    return http.delete(`/ExpenseItems/${id}`);
   }
 }
 
