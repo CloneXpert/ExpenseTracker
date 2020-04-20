@@ -59,18 +59,29 @@ export default class ExpenseList extends Component {
             console.log(response.data);
           })
           .catch(e => {
+            success = false;
             console.log(e);
           });
       }
 
-      this.gridApi.updateRowData({ remove: selectedRows });
+      if (success) {
+        this.gridApi.updateRowData({ remove: selectedRows });
+      }
     }
   };
 
   onSelectionChanged = event => {
-    this.setState((state, props) => ({
-      firstSelectedItem: event.api.getSelectedNodes()[0]
-    }));
+    const firstSelectedNode = event.api.getSelectedNodes()[0];
+    if (firstSelectedNode && firstSelectedNode.data) {
+      this.setState({
+        firstSelectedItem: firstSelectedNode.data
+      });
+    }
+    else {
+      this.setState({
+        firstSelectedItem: null
+      });
+    }
   };
 
   fetchItems() {
@@ -97,10 +108,10 @@ export default class ExpenseList extends Component {
           width: '1000px'
         }}
       >
-        <Link to={`/Expenses/Add`} className="btn btn-success btn-sm">Add new expense</Link>
+        <Link to={`/Expenses/Add`} className="btn btn-outline-success btn-sm">Add new expense</Link>
         {firstSelectedItem &&
-          <Link to={`/Expenses/Edit/${firstSelectedItem.id}`} className="btn btn-success btn-sm">Edit</Link>}
-        <button className="btn btn-danger btn-sm" role="button" onClick={() => this.onDelete()}>
+          <Link to={`/Expenses/Edit/${firstSelectedItem.id}`} className="btn btn-outline-primary btn-sm">Edit</Link>}
+        <button className="btn btn-outline-danger btn-sm" role="button" onClick={() => this.onDelete()}>
           Delete Selected
         </button>
         <AgGridReact

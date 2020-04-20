@@ -13,6 +13,11 @@ code {
     border-color: #1861ac;
 }
 
-.input-feedback {
+.btn {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.input-feedback, .error {
     color: red;
 }
